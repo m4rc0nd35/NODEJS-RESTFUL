@@ -4,13 +4,12 @@ const mysql = require("../mysql").pool;
 
 router.get("/", (req, res, next) =>{
     mysql.getConnection((error, conn)=>{
-        if(error){return res.status(500).send({ error: error})}
-        conn.query('SELECT * FROM VIEW_DEVICE WHERE id = ?;',
-            [req.body.id],
+        if(error) return res.status(500).send({ error: error});
+        conn.query('SELECT * FROM VIEW_DEVICE;',
             (error, results, field)=>{
                 conn.release();
-                if(error){return res.status(500).send({ error: error})}
-                if(results.length == 0){return res.status(404).send({ error: "Sem registros para essa consulta."})}
+                if(error) return res.status(500).send({ error: error});
+                if(results.length == 0) return res.status(404).send({ error: "Sem registros para essa consulta."});
                 
                 const response = {
                     quantidade: results.length,
@@ -32,27 +31,26 @@ router.get("/", (req, res, next) =>{
 
 router.post("/", (req, res, next) =>{
     mysql.getConnection((error, conn)=>{
-        if(error){return res.status(500).send({ error: error})}
-        var out;
-        conn.query('CALL SP_UPDATE_DEVICE(?);',
+        if(error) return res.status(500).send({ error: error});
+        conn.query('CALL SP_UPDATE_DEVICE(?, @test); SELECT @test;',
             [req.body.id],
             (error, resultado, field)=>{
-                conn.commit(function(err) {
-                    if (err) { 
-                        conn.rollback(function() {
-                        throw err;
-                      });
-                    }
-                });
+                // conn.commit(function(err) {
+                //     if (err) { 
+                //         conn.rollback(function() {
+                //         throw err;
+                //       });
+                //     }
+                // });
                 if(error){
                     conn.rollback();
                     return res.status(500).send({ error: error})
                 }
                 conn.release();
-                return res.status(202).send({ affectedRows: resultado.affectedRows })
+                return res.status(202).send(resultado)
             }
         )
-    })
+    });
 });
 
 module.exports = router;
