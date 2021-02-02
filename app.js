@@ -12,11 +12,8 @@ app.use((req, res, next) =>{
     next();
 });
 
-/* Routers */
 const deviceRouter = require("./routes/device");
 app.use("/device", deviceRouter);
-
-/* Errors */
 app.use((req, res, next) =>{
     const erro = new Error("Pagina não encontrada");
     erro.status = 404;
