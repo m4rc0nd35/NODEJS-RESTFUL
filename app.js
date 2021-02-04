@@ -15,8 +15,10 @@ app.use((req, res, next) =>{
 
 const deviceRouter = require("./routes/device");
 const uplodsRouter = require('./routes/upload');
+const loginRouter = require('./routes/authentication');
 app.use("/device", deviceRouter);
 app.use('/upload', uplodsRouter);
+app.use('/authentication', loginRouter);
 
 app.use((req, res, next) =>{
     const erro = new Error("Pagina não encontrada");

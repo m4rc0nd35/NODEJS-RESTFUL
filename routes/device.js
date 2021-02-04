@@ -6,14 +6,14 @@ router.get("/", (req, res, next) =>{
     mysql.getConnection((error, conn)=>{
         if(error) return res.status(500).send({ error: error});
         conn.query('SELECT * FROM VIEW_DEVICE;',
-            (error, results, field)=>{
+            (error, fecthAll, field)=>{
                 conn.release();
                 if(error) return res.status(500).send({ error: error});
-                if(results.length == 0) return res.status(404).send({ error: "Sem registros para essa consulta."});
+                if(fecthAll.length == 0) return res.status(404).send({ error: "Sem registros para essa consulta."});
                 
                 const response = {
-                    quantidade: results.length,
-                    devices: results.map(dev=>{
+                    quantidade: fecthAll.length,
+                    devices: fecthAll.map(dev=>{
                         return {
                             id: dev.id,
                             client_id: dev.client_id,
@@ -34,7 +34,7 @@ router.post("/", (req, res, next) =>{
         if(error) return res.status(500).send({ error: error});
         conn.query('CALL SP_UPDATE_DEVICE(?, @test); SELECT @test;',
             [req.body.id],
-            (error, resultado, field)=>{
+            (error, fetchOne, field)=>{
                 // conn.commit(function(err) {
                 //     if (err) { 
                 //         conn.rollback(function() {
@@ -44,10 +44,10 @@ router.post("/", (req, res, next) =>{
                 // });
                 if(error){
                     conn.rollback();
-                    return res.status(500).send({ error: error})
+                    return res.status(500).send({ error: error});
                 }
                 conn.release();
-                return res.status(202).send(resultado)
+                return res.status(202).send(fetchOne);
             }
         )
     });
