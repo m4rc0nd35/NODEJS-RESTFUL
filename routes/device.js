@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("../mysql").pool;
+const checkTokenUser = require("../checkTokenUser");
 
-router.get("/", (req, res, next) =>{
+router.get("/", checkTokenUser, (req, res, next) =>{
     mysql.getConnection((error, conn)=>{
         if(error) return res.status(500).send({ error: error});
         conn.query('SELECT * FROM VIEW_DEVICE;',
@@ -29,7 +30,7 @@ router.get("/", (req, res, next) =>{
     });
 });
 
-router.post("/", (req, res, next) =>{
+router.patch("/", checkTokenUser, (req, res, next) =>{
     mysql.getConnection((error, conn)=>{
         if(error) return res.status(500).send({ error: error});
         conn.query('CALL SP_UPDATE_DEVICE(?, @test); SELECT @test;',
@@ -47,7 +48,7 @@ router.post("/", (req, res, next) =>{
                     return res.status(500).send({ error: error});
                 }
                 conn.release();
-                return res.status(202).send(fetchOne);
+                return res.status(202).send({success: fetchOne[1][0]['@test']});
             }
         )
     });

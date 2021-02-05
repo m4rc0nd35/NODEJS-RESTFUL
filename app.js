@@ -2,7 +2,11 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 
-app.use('/static', express.static('uploads'))
+const deviceRouter = require("./routes/device");
+const uplodsRouter = require('./routes/upload');
+const loginRouter = require('./routes/authentication');
+
+app.use('/static', express.static('uploads'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -13,9 +17,6 @@ app.use((req, res, next) =>{
     next();
 });
 
-const deviceRouter = require("./routes/device");
-const uplodsRouter = require('./routes/upload');
-const loginRouter = require('./routes/authentication');
 app.use("/device", deviceRouter);
 app.use('/upload', uplodsRouter);
 app.use('/authentication', loginRouter);

@@ -19,7 +19,7 @@ router.post('/', (req, res, next)=>{
                 }
                 if(fetchOne[1][0]["@success"]){
                     const token = jwt.sign({
-                        id_user: fetchOne[1][0]["@token"]
+                        key: fetchOne[1][0]["@token"]
                     },
                     process.env.SECRET_KEY,{
                         expiresIn: 600
@@ -27,12 +27,11 @@ router.post('/', (req, res, next)=>{
                     );
                     return res.status(202).send({
                         mensagem: 'Autenticado com sucesso!',
-                        token: token,
-                        fetchOne: fetchOne[1][0]
+                        token: token
                     });
                 }else{
                     return res.status(401).send({
-                        mensagem: 'Autentição negada!',
+                        mensagem: 'Autenticação negada!',
                         token: false
                     });
                 }

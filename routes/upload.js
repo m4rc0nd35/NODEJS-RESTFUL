@@ -22,7 +22,7 @@ const uploads = multer({
     // fileFilter: fileFilter
 });
 
-router.post('/', uploads.single('put_image'), (req, res, next)=>{
+router.post('/', checkTokenUser, uploads.single('put_image'), (req, res, next)=>{
     var listFileType = ['image/png' ,'application/pdf'];
     if (listFileType.includes(req.file.mimetype)) {
         return res.status(202).send(req.file);
@@ -30,12 +30,12 @@ router.post('/', uploads.single('put_image'), (req, res, next)=>{
         fs.unlinkSync(req.file.path);
         return res.status(415).send({success: false});
     }
-})
+});
 
 router.get('/', checkTokenUser, (req, res, next)=>{
     console.log(req.decode);
     return res.status(200).send({
         success: true
     });
-})
+});
 module.exports = router;
