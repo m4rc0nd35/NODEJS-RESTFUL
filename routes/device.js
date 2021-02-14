@@ -10,7 +10,7 @@ router.get("/", checkTokenUser, (req, res, next) =>{
             (error, fecthAll, field)=>{
                 conn.release();
                 if(error) return res.status(500).send({ error: error});
-                if(fecthAll.length == 0) return res.status(404).send({ error: "Sem registros para essa consulta."});
+                if(fecthAll.length == 0) return res.status(404).send({error: "Sem registros para essa consulta."});
                 
                 const response = {
                     quantidade: fecthAll.length,
